@@ -12,14 +12,39 @@ const Register = () => {
         event.preventDefault();
         const email = event.target.email.value;
         const password = event.target.password.value;
-        console.log('Register Click', email)
-        
+        console.log('Register Click', email, "pass:", password)
+
+
+        const length6Pattern = /^.{6,}$/;
+        const casePattern = /^(?=.*[a-z])(?=.*[A-Z]).+$/;
+        const specialCharPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).+$/
+
+        if(!length6Pattern.test(password)){
+          console.log("password didnt match")
+          setError('Password must be 6 characters or longer')
+          return;
+        }
+        else if(!casePattern.test(password)){
+          setError('Password Must be one uppercase or lowercase character')
+          console.log('password Dont Recognize')
+          return;
+        }
+        else if(!specialCharPattern.test(password)){
+          setError('Password Must be contain at least one special character (e.g. ! @ # $ % ^ & *).')
+          return;
+        }
+
+
+
         // if(password){
         //     return alert(password)
         // }
         // else{
         //     return alert('You are Fraud Mother Fucker')
         // }
+
+
+
         setError('');
         setSuccess(false)
 

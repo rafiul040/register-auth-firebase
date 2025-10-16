@@ -1,12 +1,15 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../../Firebase/firebase.init';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Register = () => {
 
   const [success, setSuccess] = useState(false);
 
   const [error, setError] = useState('')
+
+  const [showPassword, setShowPassword] = useState(false)
 
     const handleRegister = (event) => {
         event.preventDefault();
@@ -15,24 +18,36 @@ const Register = () => {
         console.log('Register Click', email, "pass:", password)
 
 
-        const length6Pattern = /^.{6,}$/;
-        const casePattern = /^(?=.*[a-z])(?=.*[A-Z]).+$/;
-        const specialCharPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).+$/
+        // const length6Pattern = /^.{6,}$/;
+        // const casePattern = /^(?=.*[a-z])(?=.*[A-Z]).+$/;
+        // const specialCharPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).+$/
 
-        if(!length6Pattern.test(password)){
-          console.log("password didnt match")
-          setError('Password must be 6 characters or longer')
-          return;
+        // if(!length6Pattern.test(password)){
+        //   console.log("password didnt match")
+        //   setError('Password must be 6 characters or longer')
+        //   return;
+        // }
+        // else if(!casePattern.test(password)){
+        //   setError('Password Must be one uppercase or lowercase character')
+        //   console.log('password Dont Recognize')
+        //   return;
+        // }
+        // else if(!specialCharPattern.test(password)){
+        //   setError('Password Must be contain at least one special character (e.g. ! @ # $ % ^ & *).')
+        //   return;
+        // }
+
+
+
+        const strongPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/;
+
+        if(strongPattern.test(password)){
+          setError('password must be ')
+          return
         }
-        else if(!casePattern.test(password)){
-          setError('Password Must be one uppercase or lowercase character')
-          console.log('password Dont Recognize')
-          return;
-        }
-        else if(!specialCharPattern.test(password)){
-          setError('Password Must be contain at least one special character (e.g. ! @ # $ % ^ & *).')
-          return;
-        }
+
+
+
 
 
 
@@ -60,6 +75,12 @@ const Register = () => {
 
     }
 
+
+    const togglePasswordShow = (event) => {
+      event.preventDefault();
+      setShowPassword(!showPassword)
+    }
+
     return (
         <div className="hero bg-base-200 min-h-screen">
   <div className="hero-content flex-col lg:flex-row-reverse">
@@ -74,7 +95,15 @@ const Register = () => {
           <label className="label">Email</label>
           <input type="email" name='email' className="input" placeholder="Email" />
           <label className="label">Password</label>
-          <input type="password" name='password' className="input" placeholder="Password" />
+          <div className=' relative'>
+          <input type={showPassword ? 'text' : 'password'} name='password' className="input" placeholder="Password" />
+          <button onClick={togglePasswordShow} className='btn btn-xs top-2 right-2 absolute'>{ showPassword ? <FaEyeSlash/> : <FaEye/>}</button>
+          </div>
+          <div>
+            <label class='label'>
+              <input type="checkbox" name="" class='checkbox' id="" />Accept Our Terms & Conditions
+            </label>
+          </div>
           <div><a className="link link-hover">Forgot password?</a></div>
           <button className="btn btn-neutral mt-4">Login</button>
         </fieldset>

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../../Firebase/firebase.init';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -16,7 +16,9 @@ const Register = () => {
         const email = event.target.email.value;
         const password = event.target.password.value;
         const terms = event.target.terms.checked;
-        console.log('Register Click', email, "pass:", password, terms)
+        const name = event.target.name.value;
+        const photo = event.target.photo.value
+        console.log('Register Click', email, "pass:", password, terms, name, photo)
 
 
         // const length6Pattern = /^.{6,}$/;
@@ -73,6 +75,23 @@ const Register = () => {
           console.log('register click' ,userCredentials.user)
           setSuccess(true);
           event.target.reset();
+
+
+          // update user profile
+          const profile = {
+            displayName: name,
+            photoUrl: photo,
+
+          }
+          updateProfile(userCredentials.user, profile)
+          // .then(() => {
+
+          // })
+          // .cathc(error => {
+          //   console.log(error)
+          // })
+
+
           // Send Verification Email
           sendEmailVerification(userCredentials.user)
           .then(() => {
@@ -104,8 +123,18 @@ const Register = () => {
       <div className="card-body">
         <form onSubmit={handleRegister}>
         <fieldset className="fieldset">
+          {/* User Name */}
+          <label className="label">Name</label>
+          <input type="text" name='name' className="input" placeholder="Your Name" />
+          {/* User Photo URL */ }
+          <label className="label">Photo</label>
+          <input type="photo" name='photo' className="input" placeholder="Photo URL" />
+
+
           <label className="label">Email</label>
           <input type="email" name='email' className="input" placeholder="Email" />
+          
+          {/* Email */}
           <label className="label">Password</label>
           <div className=' relative'>
           <input type={showPassword ? 'text' : 'password'} name='password' className="input" placeholder="Password" />

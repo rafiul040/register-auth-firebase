@@ -1,21 +1,22 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../../Firebase/firebase.init';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-
+import { Link } from 'react-router';
 const Register = () => {
 
   const [success, setSuccess] = useState(false);
 
-  const [error, setError] = useState('')
+  const [error, setError] = useState('');
 
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
 
     const handleRegister = (event) => {
         event.preventDefault();
         const email = event.target.email.value;
         const password = event.target.password.value;
-        console.log('Register Click', email, "pass:", password)
+        const terms = event.target.terms.checked;
+        console.log('Register Click', email, "pass:", password, terms)
 
 
         // const length6Pattern = /^.{6,}$/;
@@ -41,8 +42,8 @@ const Register = () => {
 
         const strongPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/;
 
-        if(strongPattern.test(password)){
-          setError('password must be ')
+        if(!strongPattern.test(password)){
+          setError('password must be Character')
           return
         }
 
@@ -63,9 +64,20 @@ const Register = () => {
         setError('');
         setSuccess(false)
 
+        if(!terms){
+          setError('Please Accept Our Terms & Conditions')
+        }
+
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredentials) => {
           console.log('register click' ,userCredentials.user)
+          setSuccess(true);
+          event.target.reset();
+          // Send Verification Email
+          sendEmailVerification(userCredentials.user)
+          .then(() => {
+            alert('Please login to your email and Verify Your Email Address')
+          })
         })
         .catch(error => {
           console.log('error Happened' ,error)
@@ -101,11 +113,11 @@ const Register = () => {
           </div>
           <div>
             <label class='label'>
-              <input type="checkbox" name="" class='checkbox' id="" />Accept Our Terms & Conditions
+              <input type="checkbox" name="terms" class='checkbox' id="" />Accept Our Terms & Conditions
             </label>
           </div>
-          <div><a className="link link-hover">Forgot password?</a></div>
-          <button className="btn btn-neutral mt-4">Login</button>
+          {/* <div><a className="link link-hover">Forgot password?</a></div> */}
+          <button className="btn btn-neutral mt-4">Register</button>
         </fieldset>
         {
           success && <p className='text-green-500'>Account Created Succesfully.</p>
@@ -115,6 +127,9 @@ const Register = () => {
           error && <p className='text-red-500'>{error}</p>
         }
         </form>
+
+        <p >Already have an Account? Please <Link className='text-blue-400 underline' to="/login">Login</Link></p>
+
       </div>
     </div>
   </div>
